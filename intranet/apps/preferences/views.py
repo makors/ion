@@ -42,7 +42,7 @@ def get_personal_info(user):
     #     personal_info["phone_{}".format(i)] = user.phones.all()[i]
 
     for i in range(num_emails):
-        personal_info[f"email_{i}"] = user.emails.all()[i]
+        personal_info[f"email_{i}"] = user.emails.all()[i:i+1].first()
 
     # for i in range(num_websites):
     #     personal_info["website_{}".format(i)] = user.websites.all()[i]

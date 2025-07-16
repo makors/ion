@@ -40,10 +40,17 @@ def trust_session_view(request):
 @login_required
 def revoke_session_view(request):
     if request.method == "POST" and "session_key" in request.POST:
+        session_key = request.POST.get("session_key", "").strip()
+        
+        # Validate session_key is not empty and belongs to current user
+        if not session_key:
+            messages.error(request, "Invalid session key provided.")
+            return redirect("sessionmgmt")
+            
         try:
-            trusted_session = TrustedSession.objects.get(user=request.user, session_key=request.POST.get("session_key", ""))
+            trusted_session = TrustedSession.objects.get(user=request.user, session_key=session_key)
         except TrustedSession.DoesNotExist:
-            messages.error(request, "You've already revoked that session.")
+            messages.error(request, "You've already revoked that session or the session doesn't exist.")
             return redirect("sessionmgmt")
 
         session_store = SessionStore(session_key=trusted_session.session_key)

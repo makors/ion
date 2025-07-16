@@ -1216,6 +1216,12 @@ class EighthScheduledActivity(AbstractBaseEighthModel):
                 whether they did or not.
             add_to_waitlist: Explicitly add the user to the waitlist.
         """
+        # Lock on the User and the EighthScheduledActivity to prevent duplicates.
+        # This must happen FIRST to prevent race conditions.
+        logger.debug("Locking on user %d and scheduled activity %d", user.id, self.id)
+        lock_on([user, self])
+        logger.debug("Successfully locked on user %d and scheduled activity %d", user.id, self.id)
+
         if request is not None:
             force = (force or ("force" in request.GET)) and request.user.is_eighth_admin
             add_to_waitlist = (add_to_waitlist or ("add_to_waitlist" in request.GET)) and request.user.is_eighth_admin
@@ -1234,11 +1240,6 @@ class EighthScheduledActivity(AbstractBaseEighthModel):
         if sibling:
             all_sched_act.append(sibling)
             all_blocks.append(sibling.block)
-
-        # Lock on the User and the EighthScheduledActivity to prevent duplicates.
-        logger.debug("Locking on user %d and scheduled activity %d", user.id, self.id)
-        lock_on([user, self])
-        logger.debug("Successfully locked on user %d and scheduled activity %d", user.id, self.id)
 
         waitlist = None
         if force:
