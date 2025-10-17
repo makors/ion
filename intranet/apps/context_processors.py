@@ -185,6 +185,22 @@ def enable_dark_mode(request):
     return {"dark_mode_enabled": dark_mode_enabled(request)}
 
 
+def theme_info(request):
+    """
+    Export theme information for the current user.
+    """
+    theme = 'light'
+    if request.user.is_authenticated:
+        theme = getattr(request.user.dark_mode_properties, 'theme_preference', 'light')
+    else:
+        theme = request.COOKIES.get('selected-theme', 'light')
+    
+    return {
+        "user_theme": theme,
+        "is_dark_theme": theme in ['dark', 'dark_improved']
+    }
+
+
 def oauth_toolkit(request):
     """
     Export application tokens arranged by application on OAuth pages.

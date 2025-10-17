@@ -233,8 +233,34 @@
             {% endif %}
           {% endcomment %}
 
+            {% if theme_form %}
+                <h3>Theme Selection</h3>
+                <div class="theme-selector">
+                    <p>Choose your preferred theme for the best viewing experience.</p>
+                    <div class="theme-options">
+                        {% for field in theme_form %}
+                            <div class="theme-option">
+                                {{ field }}
+                                <label for="{{ field.id_for_label }}" class="theme-label">
+                                    <div class="theme-preview">
+                                        <div class="color-swatch theme-{{ field.choice_value }}"></div>
+                                        <div class="theme-info">
+                                            <h5>{{ field.choice_label }}</h5>
+                                            <p>{% if field.choice_value == 'light' %}Classic light theme{% elif field.choice_value == 'dark' %}Original dark theme{% elif field.choice_value == 'dark_improved' %}Modern dark theme with lighter tones{% endif %}</p>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <br>
+                <br>
+            {% endif %}
+
             {% if dark_mode_form %}
-                <h3>Dark Mode</h3>
+                <h3>Legacy Dark Mode</h3>
+                <p><em>Note: This setting is now managed by the theme selector above. It's kept for backward compatibility.</em></p>
                 {% for field in dark_mode_form %}
                     {{ field.label }}
                     {{ field }}

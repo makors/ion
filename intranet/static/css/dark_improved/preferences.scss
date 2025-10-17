@@ -1,0 +1,419 @@
+@import "../colors";
+
+// Improved dark theme preferences styles
+$bg-primary: #1a1a1a;
+$bg-secondary: #2d2d2d;
+$bg-tertiary: #3a3a3a;
+$bg-quaternary: #404040;
+$text-primary: #e8e8e8;
+$text-secondary: #b8b8b8;
+$text-muted: #888888;
+$interactive-primary: #4a9eff;
+$interactive-hover: #5ba8ff;
+$interactive-active: #3a8eef;
+$interactive-disabled: #666666;
+$border-primary: #4a4a4a;
+$border-secondary: #5a5a5a;
+$success-color: #4ade80;
+$warning-color: #fbbf24;
+$error-color: #f87171;
+
+.primary-content {
+    background-color: $bg-secondary;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    margin: 20px 0;
+}
+
+h2 {
+    color: $text-primary;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid $interactive-primary;
+}
+
+h3 {
+    color: $text-primary;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 32px 0 16px 0;
+    padding-left: 12px;
+    border-left: 4px solid $interactive-primary;
+}
+
+// Form styling improvements
+form {
+    background-color: $bg-tertiary;
+    border-radius: 8px;
+    padding: 24px;
+    margin: 20px 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+// Table styling for preferences
+.notification-options,
+.privacy-options {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    background-color: $bg-secondary;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.notification-options th,
+.privacy-options th {
+    background-color: $bg-quaternary;
+    color: $text-primary;
+    padding: 16px;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 2px solid $border-primary;
+}
+
+.notification-options td,
+.privacy-options td {
+    padding: 12px 16px;
+    border-bottom: 1px solid $border-primary;
+    color: $text-primary;
+}
+
+.notification-options tr:hover,
+.privacy-options tr:hover {
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+// Checkbox styling
+input[type="checkbox"] {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid $border-primary;
+    border-radius: 4px;
+    background-color: $bg-secondary;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+input[type="checkbox"]:checked {
+    background-color: $interactive-primary;
+    border-color: $interactive-primary;
+}
+
+input[type="checkbox"]:checked::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+input[type="checkbox"]:hover {
+    border-color: $interactive-primary;
+    box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.2);
+}
+
+input[type="checkbox"]:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.3);
+}
+
+// Label styling
+label {
+    color: $text-primary;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.2s ease;
+}
+
+label:hover {
+    color: $interactive-hover;
+}
+
+// Button styling
+button[type="submit"] {
+    background: linear-gradient(135deg, $interactive-primary 0%, $interactive-active 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(74, 158, 255, 0.3);
+    margin: 16px 0;
+}
+
+button[type="submit"]:hover {
+    background: linear-gradient(135deg, $interactive-hover 0%, $interactive-primary 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(74, 158, 255, 0.4);
+}
+
+button[type="submit"]:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(74, 158, 255, 0.3);
+}
+
+// Formset styling
+.phone-formset,
+.email-formset,
+.website-formset {
+    background-color: $bg-secondary;
+    border-radius: 8px;
+    padding: 16px;
+    margin: 16px 0;
+    border: 1px solid $border-primary;
+}
+
+.formset-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+}
+
+.formset-table td {
+    padding: 8px;
+    border-bottom: 1px solid $border-primary;
+}
+
+.formset-table input[type="text"],
+.formset-table input[type="email"],
+.formset-table input[type="url"] {
+    width: 100%;
+    background-color: $bg-tertiary;
+    color: $text-primary;
+    border: 1px solid $border-primary;
+    border-radius: 4px;
+    padding: 8px 12px;
+    transition: all 0.2s ease;
+}
+
+.formset-table input:focus {
+    border-color: $interactive-primary;
+    box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.2);
+    background-color: $bg-quaternary;
+}
+
+// Add/Delete buttons for formsets
+.formset-table button {
+    background-color: $interactive-primary;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+}
+
+.formset-table button:hover {
+    background-color: $interactive-hover;
+    transform: translateY(-1px);
+}
+
+.formset-table button.delete {
+    background-color: $error-color;
+}
+
+.formset-table button.delete:hover {
+    background-color: #ef4444;
+}
+
+// Select styling
+select {
+    background-color: $bg-secondary;
+    color: $text-primary;
+    border: 1px solid $border-primary;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+select:focus {
+    outline: none;
+    border-color: $interactive-primary;
+    box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.2);
+}
+
+// Radio button styling
+input[type="radio"] {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid $border-primary;
+    border-radius: 50%;
+    background-color: $bg-secondary;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+input[type="radio"]:checked {
+    background-color: $interactive-primary;
+    border-color: $interactive-primary;
+}
+
+input[type="radio"]:checked::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px;
+    height: 8px;
+    background-color: white;
+    border-radius: 50%;
+}
+
+input[type="radio"]:hover {
+    border-color: $interactive-primary;
+    box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.2);
+}
+
+// Theme selector specific styling
+.theme-selector {
+    background-color: $bg-secondary;
+    border: 1px solid $border-primary;
+    border-radius: 8px;
+    padding: 16px;
+    margin: 16px 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.theme-selector h4 {
+    color: $text-primary;
+    margin: 0 0 12px 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.theme-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.theme-option {
+    background-color: $bg-tertiary;
+    border: 2px solid $border-primary;
+    border-radius: 8px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.theme-option:hover {
+    border-color: $interactive-primary;
+    box-shadow: 0 4px 12px rgba(74, 158, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.theme-option.selected {
+    border-color: $interactive-primary;
+    background-color: rgba(74, 158, 255, 0.1);
+    box-shadow: 0 4px 12px rgba(74, 158, 255, 0.3);
+}
+
+.theme-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.theme-option .theme-preview {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.theme-option .theme-preview .color-swatch {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    border: 1px solid $border-primary;
+}
+
+.theme-option .theme-info h5 {
+    color: $text-primary;
+    margin: 0 0 4px 0;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.theme-option .theme-info p {
+    color: $text-secondary;
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+// Success/Error messages
+.messages {
+    margin: 16px 0;
+}
+
+.messages .message {
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin: 8px 0;
+    font-weight: 500;
+}
+
+.messages .success {
+    background-color: rgba(74, 222, 128, 0.1);
+    color: $success-color;
+    border: 1px solid rgba(74, 222, 128, 0.3);
+}
+
+.messages .error {
+    background-color: rgba(248, 113, 113, 0.1);
+    color: $error-color;
+    border: 1px solid rgba(248, 113, 113, 0.3);
+}
+
+.messages .warning {
+    background-color: rgba(251, 191, 36, 0.1);
+    color: $warning-color;
+    border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+// Responsive design
+@media (max-width: 768px) {
+    .primary-content {
+        padding: 16px;
+        margin: 10px 0;
+    }
+    
+    .theme-options {
+        grid-template-columns: 1fr;
+    }
+    
+    .notification-options,
+    .privacy-options {
+        font-size: 0.9rem;
+    }
+    
+    .notification-options th,
+    .privacy-options th,
+    .notification-options td,
+    .privacy-options td {
+        padding: 8px 12px;
+    }
+}
