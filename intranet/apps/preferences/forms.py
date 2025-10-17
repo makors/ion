@@ -105,22 +105,30 @@ class DarkModeForm(forms.Form):
     )
 
     def __init__(self, user, *args, **kwargs):
+        provided_initial = dict(kwargs.get("initial", {}) or {})
         super().__init__(*args, **kwargs)
+
         preferences = UserDarkModeProperties.get_preferences(user)
         stored_theme = preferences.get("theme")
         if stored_theme:
-            initial_theme = stored_theme
+            default_initial = stored_theme
         else:
-            initial_theme = (
+            default_initial = (
                 self.THEME_DARK_CLASSIC
                 if preferences.get("dark_mode_enabled")
                 else self.THEME_LIGHT
             )
+
+        candidate_initial = provided_initial.get("theme_preference", default_initial)
+        valid_themes = {choice for choice, _ in self.THEME_CHOICES}
+        initial_theme = candidate_initial if candidate_initial in valid_themes else default_initial
+
         self.fields["theme_preference"] = forms.ChoiceField(
             choices=self.THEME_CHOICES,
             initial=initial_theme,
             label="Theme",
         )
+        self.initial.setdefault("theme_preference", initial_theme)
 
 
 class PhoneForm(forms.ModelForm):
