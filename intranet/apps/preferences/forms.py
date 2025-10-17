@@ -4,7 +4,7 @@ from django import forms
 from django.contrib.auth import get_user_model
 
 from ..bus.models import Route
-from ..users.models import Email, Grade, Phone, Website
+from ..users.models import Email, Grade, Phone, UserDarkModeProperties, Website
 
 logger = logging.getLogger(__name__)
 
@@ -95,16 +95,25 @@ class NotificationOptionsForm(forms.Form):
 
 
 class DarkModeForm(forms.Form):
-    THEME_LIGHT = "light"
-    THEME_DARK = "dark"
+    THEME_LIGHT = UserDarkModeProperties.THEME_LIGHT
+    THEME_DARK_CLASSIC = UserDarkModeProperties.THEME_DARK_CLASSIC
+    THEME_DARK_TWILIGHT = UserDarkModeProperties.THEME_DARK_TWILIGHT
     THEME_CHOICES = (
         (THEME_LIGHT, "Light"),
-        (THEME_DARK, "Twilight (dark)"),
+        (THEME_DARK_CLASSIC, "Dark (classic)"),
+        (THEME_DARK_TWILIGHT, "Twilight (dark)"),
     )
 
     def __init__(self, user, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        initial_theme = self.THEME_DARK if user.dark_mode_properties.dark_mode_enabled else self.THEME_LIGHT
+        try:
+            initial_theme = user.dark_mode_properties.theme
+        except (AttributeError, UserDarkModeProperties.DoesNotExist):
+            initial_theme = (
+                self.THEME_DARK_CLASSIC
+                if user.dark_mode_properties.dark_mode_enabled
+                else self.THEME_LIGHT
+            )
         self.fields["theme_preference"] = forms.ChoiceField(
             choices=self.THEME_CHOICES,
             initial=initial_theme,

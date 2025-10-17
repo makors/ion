@@ -1,14 +1,14 @@
 ul.nav {
-    background-color: #1b2335;
+    background-color: black;
 }
 
 .nav a, .nav a:active, .nav a:visited {
-    color: #d7def0;
+    color: #B7B7B7;
 }
 
 .nav-icon {
     background-position-y: 28px;
-    opacity: 0.85;
+    opacity: 0.8;
 }
 
 .nav li:hover .nav-icon, .nav li.selected .nav-icon {
@@ -17,7 +17,8 @@ ul.nav {
 
 @media(max-width: 550px) {
     .main ul.nav {
-        background-color: #1a2132;
+        background-color: #0D0D0B;
     }
 }
 
+@import "twilight/nav";

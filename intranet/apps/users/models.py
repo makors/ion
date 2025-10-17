@@ -1282,8 +1282,18 @@ class UserDarkModeProperties(models.Model):
     Contains user properties relating to dark mode
     """
 
+    THEME_LIGHT = "light"
+    THEME_DARK_CLASSIC = "dark-classic"
+    THEME_DARK_TWILIGHT = "dark-twilight"
+    THEME_CHOICES = (
+        (THEME_LIGHT, "Light"),
+        (THEME_DARK_CLASSIC, "Dark (classic)"),
+        (THEME_DARK_TWILIGHT, "Twilight (dark)"),
+    )
+
     user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name="dark_mode_properties", on_delete=models.CASCADE)
     dark_mode_enabled = models.BooleanField(default=False)
+    theme = models.CharField(max_length=32, choices=THEME_CHOICES, default=THEME_LIGHT)
 
     def __str__(self):
         return str(self.user)

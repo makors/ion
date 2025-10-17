@@ -1,0 +1,16 @@
+body.theme-dark-twilight {
+    select {
+        background-color: #1f2533;
+        color: #f4f6fb;
+        border-color: rgba(255, 255, 255, 0.08);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    }
+
+    .theme-picker-intro {
+        color: #c3cadb;
+    }
+
+    .theme-picker label {
+        color: #e7ecfa;
+    }
+}

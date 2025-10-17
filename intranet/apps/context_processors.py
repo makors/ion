@@ -12,6 +12,7 @@ from intranet.apps.cslapps.models import App
 from intranet.apps.notifications.models import NotificationConfig
 from intranet.apps.oauth.models import CSLApplication
 
+from ..users.models import UserDarkModeProperties
 from ..utils.helpers import dark_mode_enabled, get_theme, get_theme_name, get_warning_html
 from .announcements.models import WarningAnnouncement
 from .schedule.models import Day
@@ -180,9 +181,22 @@ def show_bus_button(request):
 
 def enable_dark_mode(request):
     """
-    Export whether dark mode is enabled.
+    Export whether dark mode is enabled along with the selected theme variant.
     """
-    return {"dark_mode_enabled": dark_mode_enabled(request)}
+    enabled = dark_mode_enabled(request)
+    if not enabled:
+        return {"dark_mode_enabled": False, "dark_mode_theme": "light"}
+
+    default_theme = "dark-classic"
+    theme = request.COOKIES.get("dark-mode-theme", default_theme)
+
+    if request.user.is_authenticated:
+        try:
+            theme = request.user.dark_mode_properties.theme or default_theme
+        except (AttributeError, UserDarkModeProperties.DoesNotExist):
+            theme = default_theme
+
+    return {"dark_mode_enabled": True, "dark_mode_theme": theme}
 
 
 def oauth_toolkit(request):

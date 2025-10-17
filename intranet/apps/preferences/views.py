@@ -9,7 +9,7 @@ from django.shortcuts import redirect, render
 
 from ..auth.decorators import eighth_admin_required
 from ..bus.models import Route
-from ..users.models import Email
+from ..users.models import Email, UserDarkModeProperties
 from .forms import BusRouteForm, DarkModeForm, EmailFormset, NotificationOptionsForm, PreferredPictureForm, PrivacyOptionsForm
 
 # from .forms import (BusRouteForm, DarkModeForm, EmailFormset, NotificationOptionsForm, PhoneFormset, PreferredPictureForm, PrivacyOptionsForm,
@@ -279,16 +279,29 @@ def save_gcm_options(request, user):
 
 
 def save_dark_mode_settings(request, user):
-    initial_theme = DarkModeForm.THEME_DARK if user.dark_mode_properties.dark_mode_enabled else DarkModeForm.THEME_LIGHT
+    try:
+        dark_mode_properties = user.dark_mode_properties
+    except UserDarkModeProperties.DoesNotExist:
+        dark_mode_properties = UserDarkModeProperties.objects.create(user=user)
+        setattr(user, "dark_mode_properties", dark_mode_properties)
+
+    initial_theme = dark_mode_properties.theme or (
+        DarkModeForm.THEME_DARK_CLASSIC
+        if dark_mode_properties.dark_mode_enabled
+        else DarkModeForm.THEME_LIGHT
+    )
     dark_mode_form = DarkModeForm(user, data=request.POST, initial={"theme_preference": initial_theme})
     if dark_mode_form.is_valid():
         if dark_mode_form.has_changed():
             selected_theme = dark_mode_form.cleaned_data["theme_preference"]
-            user.dark_mode_properties.dark_mode_enabled = selected_theme == DarkModeForm.THEME_DARK
-            user.dark_mode_properties.save()
+            dark_mode_properties.dark_mode_enabled = selected_theme != DarkModeForm.THEME_LIGHT
+            dark_mode_properties.theme = selected_theme
+            dark_mode_properties.save()
             invalidate_obj(request.user.dark_mode_properties)
-            if user.dark_mode_properties.dark_mode_enabled:
+            if selected_theme == DarkModeForm.THEME_DARK_TWILIGHT:
                 messages.success(request, "Switched to the Twilight theme")
+            elif selected_theme == DarkModeForm.THEME_DARK_CLASSIC:
+                messages.success(request, "Switched to the Classic Dark theme")
             else:
                 messages.success(request, "Switched to the Light theme")
 
@@ -360,7 +373,17 @@ def preferences_view(request):
         notification_options = get_notification_options(user)
         notification_options_form = NotificationOptionsForm(user, initial=notification_options)
 
-        initial_theme = DarkModeForm.THEME_DARK if user.dark_mode_properties.dark_mode_enabled else DarkModeForm.THEME_LIGHT
+        try:
+            dark_mode_properties = user.dark_mode_properties
+        except UserDarkModeProperties.DoesNotExist:
+            dark_mode_properties = UserDarkModeProperties.objects.create(user=user)
+            setattr(user, "dark_mode_properties", dark_mode_properties)
+
+        initial_theme = dark_mode_properties.theme or (
+            DarkModeForm.THEME_DARK_CLASSIC
+            if dark_mode_properties.dark_mode_enabled
+            else DarkModeForm.THEME_LIGHT
+        )
         dark_mode_form = DarkModeForm(user, initial={"theme_preference": initial_theme})
 
     context = {
