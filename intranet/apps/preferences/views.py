@@ -279,13 +279,18 @@ def save_gcm_options(request, user):
 
 
 def save_dark_mode_settings(request, user):
-    dark_mode_form = DarkModeForm(user, data=request.POST, initial={"dark_mode_enabled": user.dark_mode_properties.dark_mode_enabled})
+    initial_theme = DarkModeForm.THEME_DARK if user.dark_mode_properties.dark_mode_enabled else DarkModeForm.THEME_LIGHT
+    dark_mode_form = DarkModeForm(user, data=request.POST, initial={"theme_preference": initial_theme})
     if dark_mode_form.is_valid():
         if dark_mode_form.has_changed():
-            user.dark_mode_properties.dark_mode_enabled = dark_mode_form.cleaned_data["dark_mode_enabled"]
+            selected_theme = dark_mode_form.cleaned_data["theme_preference"]
+            user.dark_mode_properties.dark_mode_enabled = selected_theme == DarkModeForm.THEME_DARK
             user.dark_mode_properties.save()
             invalidate_obj(request.user.dark_mode_properties)
-            messages.success(request, ("Dark mode enabled" if user.dark_mode_properties.dark_mode_enabled else "Dark mode disabled"))
+            if user.dark_mode_properties.dark_mode_enabled:
+                messages.success(request, "Switched to the Twilight theme")
+            else:
+                messages.success(request, "Switched to the Light theme")
 
     return dark_mode_form
 
@@ -355,7 +360,8 @@ def preferences_view(request):
         notification_options = get_notification_options(user)
         notification_options_form = NotificationOptionsForm(user, initial=notification_options)
 
-        dark_mode_form = DarkModeForm(user, initial={"dark_mode_enabled": user.dark_mode_properties.dark_mode_enabled})
+        initial_theme = DarkModeForm.THEME_DARK if user.dark_mode_properties.dark_mode_enabled else DarkModeForm.THEME_LIGHT
+        dark_mode_form = DarkModeForm(user, initial={"theme_preference": initial_theme})
 
     context = {
         # "phone_formset": phone_formset,

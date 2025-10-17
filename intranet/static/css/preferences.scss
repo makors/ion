@@ -50,6 +50,26 @@ select {
     font-family: "Open Sans", "Helvetica Neue", sans-serif;
 }
 
+.theme-picker {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 280px;
+
+    label {
+        font-weight: 600;
+    }
+
+    select {
+        width: 100%;
+    }
+}
+
+.theme-picker-intro {
+    margin-bottom: 8px;
+    color: #555;
+}
+
 .delete-row {
     padding-left: 10px;
 }

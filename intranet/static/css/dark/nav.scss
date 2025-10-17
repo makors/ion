@@ -1,14 +1,14 @@
 ul.nav {
-    background-color: black;
+    background-color: #1b2335;
 }
 
 .nav a, .nav a:active, .nav a:visited {
-    color: #B7B7B7;
+    color: #d7def0;
 }
 
 .nav-icon {
     background-position-y: 28px;
-    opacity: 0.8;
+    opacity: 0.85;
 }
 
 .nav li:hover .nav-icon, .nav li.selected .nav-icon {
@@ -17,7 +17,7 @@ ul.nav {
 
 @media(max-width: 550px) {
     .main ul.nav {
-        background-color: #0D0D0B;
+        background-color: #1a2132;
     }
 }
 

@@ -95,10 +95,20 @@ class NotificationOptionsForm(forms.Form):
 
 
 class DarkModeForm(forms.Form):
+    THEME_LIGHT = "light"
+    THEME_DARK = "dark"
+    THEME_CHOICES = (
+        (THEME_LIGHT, "Light"),
+        (THEME_DARK, "Twilight (dark)"),
+    )
+
     def __init__(self, user, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["dark_mode_enabled"] = forms.BooleanField(
-            initial=user.dark_mode_properties.dark_mode_enabled, label="Enable dark mode?", required=False
+        initial_theme = self.THEME_DARK if user.dark_mode_properties.dark_mode_enabled else self.THEME_LIGHT
+        self.fields["theme_preference"] = forms.ChoiceField(
+            choices=self.THEME_CHOICES,
+            initial=initial_theme,
+            label="Theme",
         )
 
 
