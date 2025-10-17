@@ -192,7 +192,7 @@ table.zebra tbody tr:nth-child(odd) {
 }
 
 img.invert {
-    filter: invert(1) brightness(1.1);
+    filter: invert(1) brightness(1.45) contrast(1.25);
 
     &:hover {
         filter: none;
@@ -200,7 +200,7 @@ img.invert {
 }
 
 img.invert-100 {
-    filter: invert(1);
+    filter: invert(1) brightness(1.2) contrast(1.1);
 }
 
 .csl-apps .dropdown-menu a:hover {
