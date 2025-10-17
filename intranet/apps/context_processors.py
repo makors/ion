@@ -12,7 +12,7 @@ from intranet.apps.cslapps.models import App
 from intranet.apps.notifications.models import NotificationConfig
 from intranet.apps.oauth.models import CSLApplication
 
-from ..users.models import UserDarkModeProperties
+from .users.models import UserDarkModeProperties
 from ..utils.helpers import dark_mode_enabled, get_theme, get_theme_name, get_warning_html
 from .announcements.models import WarningAnnouncement
 from .schedule.models import Day
