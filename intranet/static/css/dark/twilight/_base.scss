@@ -1,3 +1,5 @@
+@import "../colors";
+
 body.theme-dark-twilight {
     color: #e2e8f7;
     background-color: #151b2b;
@@ -207,7 +209,7 @@ body.theme-dark-twilight {
     }
 
     img.invert {
-        filter: invert(0.8);
+        filter: invert(1) brightness(1.1);
 
         &:hover {
             filter: none;
