@@ -258,6 +258,9 @@ def dark_mode_enabled(request):
         return True
 
     if request.user.is_authenticated:
-        return request.user.dark_mode_properties.dark_mode_enabled
+        from ..apps.users.models import UserDarkModeProperties  # Imported lazily to avoid circular dependency
+
+        preferences = UserDarkModeProperties.get_preferences(request.user)
+        return bool(preferences.get("dark_mode_enabled"))
     else:
         return request.COOKIES.get("dark-mode-enabled", "") == "1"

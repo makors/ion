@@ -106,12 +106,14 @@ class DarkModeForm(forms.Form):
 
     def __init__(self, user, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        try:
-            initial_theme = user.dark_mode_properties.theme
-        except (AttributeError, UserDarkModeProperties.DoesNotExist):
+        preferences = UserDarkModeProperties.get_preferences(user)
+        stored_theme = preferences.get("theme")
+        if stored_theme:
+            initial_theme = stored_theme
+        else:
             initial_theme = (
                 self.THEME_DARK_CLASSIC
-                if user.dark_mode_properties.dark_mode_enabled
+                if preferences.get("dark_mode_enabled")
                 else self.THEME_LIGHT
             )
         self.fields["theme_preference"] = forms.ChoiceField(

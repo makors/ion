@@ -12,18 +12,31 @@ class DarkModeMiddleware:
     def __call__(self, request):
         response = self.get_response(request)
         if request.user is not None and request.user.is_authenticated:
-            try:
-                dark_mode_properties = request.user.dark_mode_properties
-            except UserDarkModeProperties.DoesNotExist:
-                dark_mode_properties, _ = UserDarkModeProperties.objects.get_or_create(user=request.user)
+            preferences = UserDarkModeProperties.get_preferences(request.user)
+
+            enabled_override = getattr(request, "_dark_mode_enabled_override", None)
+            enabled = bool(preferences.get("dark_mode_enabled") if enabled_override is None else enabled_override)
+
+            valid_themes = {choice for choice, _ in UserDarkModeProperties.THEME_CHOICES}
+
+            theme_override = getattr(request, "_dark_mode_theme_override", None)
+            theme = theme_override or preferences.get("theme")
+            if not theme:
+                if enabled:
+                    theme = request.COOKIES.get("dark-mode-theme") or UserDarkModeProperties.THEME_DARK_CLASSIC
+                else:
+                    theme = UserDarkModeProperties.THEME_LIGHT
+            elif theme not in valid_themes:
+                theme = UserDarkModeProperties.THEME_DARK_CLASSIC if enabled else UserDarkModeProperties.THEME_LIGHT
+
             response.set_cookie(
                 "dark-mode-enabled",
-                str(int(bool(dark_mode_properties.dark_mode_enabled))),
+                str(int(enabled)),
                 max_age=30 * 24 * 60 * 60,
             )
             response.set_cookie(
                 "dark-mode-theme",
-                dark_mode_properties.theme,
+                theme,
                 max_age=30 * 24 * 60 * 60,
             )
         return response

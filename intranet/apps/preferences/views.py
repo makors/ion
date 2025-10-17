@@ -279,25 +279,33 @@ def save_gcm_options(request, user):
 
 
 def save_dark_mode_settings(request, user):
-    try:
-        dark_mode_properties = user.dark_mode_properties
-    except UserDarkModeProperties.DoesNotExist:
-        dark_mode_properties = UserDarkModeProperties.objects.create(user=user)
-        setattr(user, "dark_mode_properties", dark_mode_properties)
+    preferences = UserDarkModeProperties.get_preferences(user)
 
-    initial_theme = dark_mode_properties.theme or (
-        DarkModeForm.THEME_DARK_CLASSIC
-        if dark_mode_properties.dark_mode_enabled
-        else DarkModeForm.THEME_LIGHT
+    valid_themes = {choice for choice, _ in DarkModeForm.THEME_CHOICES}
+
+    initial_theme = preferences.get("theme") or (
+        DarkModeForm.THEME_DARK_CLASSIC if preferences.get("dark_mode_enabled") else DarkModeForm.THEME_LIGHT
     )
+    if not preferences.get("theme"):
+        cookie_theme = request.COOKIES.get("dark-mode-theme")
+        if cookie_theme in valid_themes:
+            initial_theme = cookie_theme
     dark_mode_form = DarkModeForm(user, data=request.POST, initial={"theme_preference": initial_theme})
     if dark_mode_form.is_valid():
         if dark_mode_form.has_changed():
             selected_theme = dark_mode_form.cleaned_data["theme_preference"]
-            dark_mode_properties.dark_mode_enabled = selected_theme != DarkModeForm.THEME_LIGHT
-            dark_mode_properties.theme = selected_theme
-            dark_mode_properties.save()
-            invalidate_obj(request.user.dark_mode_properties)
+            persisted = UserDarkModeProperties.persist_preferences(
+                user,
+                dark_mode_enabled=(selected_theme != DarkModeForm.THEME_LIGHT),
+                theme=selected_theme,
+            )
+            request._dark_mode_enabled_override = persisted["dark_mode_enabled"]
+            request._dark_mode_theme_override = persisted["theme"]
+            if UserDarkModeProperties.theme_column_available():
+                try:
+                    invalidate_obj(UserDarkModeProperties.objects.get(user=request.user))
+                except UserDarkModeProperties.DoesNotExist:
+                    pass
             if selected_theme == DarkModeForm.THEME_DARK_TWILIGHT:
                 messages.success(request, "Switched to the Twilight theme")
             elif selected_theme == DarkModeForm.THEME_DARK_CLASSIC:
@@ -349,6 +357,8 @@ def preferences_view(request):
         email_formset = EmailFormset(instance=user, prefix="ef")
         # website_formset = WebsiteFormset(instance=user, prefix="wf")
 
+        valid_themes = {choice for choice, _ in DarkModeForm.THEME_CHOICES}
+
         if user.is_student:
             preferred_pic = get_preferred_pic(user)
             bus_route = get_bus_route(user)
@@ -373,17 +383,14 @@ def preferences_view(request):
         notification_options = get_notification_options(user)
         notification_options_form = NotificationOptionsForm(user, initial=notification_options)
 
-        try:
-            dark_mode_properties = user.dark_mode_properties
-        except UserDarkModeProperties.DoesNotExist:
-            dark_mode_properties = UserDarkModeProperties.objects.create(user=user)
-            setattr(user, "dark_mode_properties", dark_mode_properties)
-
-        initial_theme = dark_mode_properties.theme or (
-            DarkModeForm.THEME_DARK_CLASSIC
-            if dark_mode_properties.dark_mode_enabled
-            else DarkModeForm.THEME_LIGHT
+        preferences = UserDarkModeProperties.get_preferences(user)
+        initial_theme = preferences.get("theme") or (
+            DarkModeForm.THEME_DARK_CLASSIC if preferences.get("dark_mode_enabled") else DarkModeForm.THEME_LIGHT
         )
+        if not preferences.get("theme"):
+            cookie_theme = request.COOKIES.get("dark-mode-theme")
+            if cookie_theme in valid_themes:
+                initial_theme = cookie_theme
         dark_mode_form = DarkModeForm(user, initial={"theme_preference": initial_theme})
 
     context = {

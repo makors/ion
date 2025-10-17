@@ -190,11 +190,20 @@ def enable_dark_mode(request):
     default_theme = "dark-classic"
     theme = request.COOKIES.get("dark-mode-theme", default_theme)
 
+    valid_themes = {choice for choice, _ in UserDarkModeProperties.THEME_CHOICES}
+
     if request.user.is_authenticated:
-        try:
-            theme = request.user.dark_mode_properties.theme or default_theme
-        except (AttributeError, UserDarkModeProperties.DoesNotExist):
-            theme = default_theme
+        preferences = UserDarkModeProperties.get_preferences(request.user)
+        stored_theme = preferences.get("theme")
+        if stored_theme in valid_themes:
+            theme = stored_theme
+        elif preferences.get("dark_mode_enabled"):
+            cookie_theme = request.COOKIES.get("dark-mode-theme", default_theme)
+            theme = cookie_theme if cookie_theme in valid_themes else default_theme
+        else:
+            theme = "light"
+    elif theme not in valid_themes:
+        theme = default_theme
 
     return {"dark_mode_enabled": True, "dark_mode_theme": theme}
 
