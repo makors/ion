@@ -3,14 +3,14 @@ import logging
 from base64 import b64encode
 from collections.abc import Collection
 from datetime import timedelta
-from typing import Optional
+from typing import ClassVar, Optional
 
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, AnonymousUser, PermissionsMixin
 from django.contrib.auth.models import UserManager as DjangoUserManager
 from django.core.cache import cache
-from django.db import models
+from django.db import IntegrityError, OperationalError, ProgrammingError, connection, models
 from django.db.models import Count, F, Q, QuerySet
 from django.utils import timezone
 from django.utils.functional import cached_property
@@ -1282,8 +1282,113 @@ class UserDarkModeProperties(models.Model):
     Contains user properties relating to dark mode
     """
 
+    THEME_LIGHT = "light"
+    THEME_DARK_CLASSIC = "dark-classic"
+    THEME_DARK_TWILIGHT = "dark-twilight"
+    THEME_CHOICES = (
+        (THEME_LIGHT, "Light"),
+        (THEME_DARK_CLASSIC, "Dark (classic)"),
+        (THEME_DARK_TWILIGHT, "Twilight (dark)"),
+    )
+
     user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name="dark_mode_properties", on_delete=models.CASCADE)
     dark_mode_enabled = models.BooleanField(default=False)
+    theme = models.CharField(max_length=32, choices=THEME_CHOICES, default=THEME_LIGHT)
+
+    _theme_column_available: ClassVar[bool | None] = None
+
+    @classmethod
+    def _theme_column_name(cls) -> str:
+        return cls._meta.get_field("theme").column
+
+    @classmethod
+    def _user_column_name(cls) -> str:
+        return cls._meta.get_field("user").column
+
+    @classmethod
+    def _dark_mode_enabled_column_name(cls) -> str:
+        return cls._meta.get_field("dark_mode_enabled").column
+
+    @classmethod
+    def theme_column_available(cls) -> bool:
+        if cls._theme_column_available is not None:
+            return cls._theme_column_available
+
+        table_name = cls._meta.db_table
+        try:
+            with connection.cursor() as cursor:
+                description = connection.introspection.get_table_description(cursor, table_name)
+        except (ProgrammingError, OperationalError):
+            cls._theme_column_available = False
+            return cls._theme_column_available
+
+        column_name = cls._theme_column_name()
+        cls._theme_column_available = any(
+            getattr(field_info, "name", field_info[0]) == column_name for field_info in description
+        )
+        return cls._theme_column_available
+
+    @classmethod
+    def ensure_exists(cls, user) -> None:
+        if cls.objects.filter(user=user).exists():
+            return
+
+        if cls.theme_column_available():
+            cls.objects.get_or_create(user=user)
+            return
+
+        table = connection.ops.quote_name(cls._meta.db_table)
+        user_column = connection.ops.quote_name(cls._user_column_name())
+        enabled_column = connection.ops.quote_name(cls._dark_mode_enabled_column_name())
+
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute(
+                    f"INSERT INTO {table} ({user_column}, {enabled_column}) VALUES (%s, %s)",
+                    [user.pk, False],
+                )
+            except IntegrityError:
+                return
+
+    @classmethod
+    def get_preferences(cls, user) -> dict[str, object]:
+        include_theme = cls.theme_column_available()
+        fields = ["dark_mode_enabled"]
+        if include_theme:
+            fields.append("theme")
+
+        record = cls.objects.filter(user=user).values(*fields).first()
+        if record is None:
+            cls.ensure_exists(user)
+            record = cls.objects.filter(user=user).values(*fields).first()
+
+        if not record:
+            return {"dark_mode_enabled": False, "theme": None}
+
+        return {
+            "dark_mode_enabled": bool(record.get("dark_mode_enabled", False)),
+            "theme": record.get("theme"),
+        }
+
+    @classmethod
+    def persist_preferences(cls, user, *, dark_mode_enabled: bool, theme: str | None) -> dict[str, object]:
+        include_theme = cls.theme_column_available()
+        valid_themes = {choice for choice, _ in cls.THEME_CHOICES}
+        theme_value = theme if theme in valid_themes else None
+
+        if include_theme:
+            cls.objects.update_or_create(
+                user=user,
+                defaults={
+                    "dark_mode_enabled": dark_mode_enabled,
+                    "theme": theme_value or cls.THEME_LIGHT,
+                },
+            )
+        else:
+            cls.ensure_exists(user)
+            cls.objects.filter(user=user).update(dark_mode_enabled=dark_mode_enabled)
+
+        return {"dark_mode_enabled": dark_mode_enabled, "theme": theme_value or theme}
 
     def __str__(self):
         return str(self.user)

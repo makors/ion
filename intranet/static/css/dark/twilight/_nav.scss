@@ -1,0 +1,44 @@
+@import "../../colors";
+
+body.theme-dark-twilight {
+    ul.nav {
+        background-color: #1b2335;
+        border-color: $darkborder;
+    }
+
+    .main ul.nav > li {
+        border-color: $darkborder;
+    }
+
+    .nav a,
+    .nav a:active,
+    .nav a:visited {
+        color: #d7def0;
+    }
+
+    ul.nav a:hover {
+        color: #a0c2ff;
+    }
+
+    ul.nav li:not(.selected) a:hover i {
+        color: #6b9cff;
+    }
+
+    .nav-icon {
+        background-position-y: 28px;
+        opacity: 0.85;
+    }
+
+    .nav li:hover .nav-icon,
+    .nav li.selected .nav-icon {
+        opacity: 1;
+    }
+}
+
+@media(max-width: 550px) {
+    body.theme-dark-twilight {
+        .main ul.nav {
+            background-color: #1a2132;
+        }
+    }
+}

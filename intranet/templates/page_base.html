@@ -61,7 +61,7 @@
 
     {% include "android_client_check.html" %}
 </head>
-<body class="notransition{% block bodyclass %}{% endblock %}"{% block bodytag %}{% endblock %}>
+<body class="notransition{% block bodyclass %}{% endblock %}{% if dark_mode_theme %} theme-{{ dark_mode_theme }}{% endif %}"{% block bodytag %}{% endblock %}>
     {% if global_warning %}<div class="warning-announcement">{{ global_warning|safe|linebreaks }}</div>{% endif %}
     {% block body %}
     {% endblock %}

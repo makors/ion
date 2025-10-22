@@ -4,7 +4,7 @@ from django import forms
 from django.contrib.auth import get_user_model
 
 from ..bus.models import Route
-from ..users.models import Email, Grade, Phone, Website
+from ..users.models import Email, Grade, Phone, UserDarkModeProperties, Website
 
 logger = logging.getLogger(__name__)
 
@@ -95,11 +95,40 @@ class NotificationOptionsForm(forms.Form):
 
 
 class DarkModeForm(forms.Form):
+    THEME_LIGHT = UserDarkModeProperties.THEME_LIGHT
+    THEME_DARK_CLASSIC = UserDarkModeProperties.THEME_DARK_CLASSIC
+    THEME_DARK_TWILIGHT = UserDarkModeProperties.THEME_DARK_TWILIGHT
+    THEME_CHOICES = (
+        (THEME_LIGHT, "Light"),
+        (THEME_DARK_CLASSIC, "Dark (classic)"),
+        (THEME_DARK_TWILIGHT, "Twilight (dark)"),
+    )
+
     def __init__(self, user, *args, **kwargs):
+        provided_initial = dict(kwargs.get("initial", {}) or {})
         super().__init__(*args, **kwargs)
-        self.fields["dark_mode_enabled"] = forms.BooleanField(
-            initial=user.dark_mode_properties.dark_mode_enabled, label="Enable dark mode?", required=False
+
+        preferences = UserDarkModeProperties.get_preferences(user)
+        stored_theme = preferences.get("theme")
+        if stored_theme:
+            default_initial = stored_theme
+        else:
+            default_initial = (
+                self.THEME_DARK_CLASSIC
+                if preferences.get("dark_mode_enabled")
+                else self.THEME_LIGHT
+            )
+
+        candidate_initial = provided_initial.get("theme_preference", default_initial)
+        valid_themes = {choice for choice, _ in self.THEME_CHOICES}
+        initial_theme = candidate_initial if candidate_initial in valid_themes else default_initial
+
+        self.fields["theme_preference"] = forms.ChoiceField(
+            choices=self.THEME_CHOICES,
+            initial=initial_theme,
+            label="Theme",
         )
+        self.initial.setdefault("theme_preference", initial_theme)
 
 
 class PhoneForm(forms.ModelForm):
