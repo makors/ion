@@ -1,11 +1,10 @@
 # Contributing to Ion
 Welcome to the [TJ CSL](https://sysadmins.tjhsst.edu) repository for Intranet 3! This document explains all you need to know about contributing to Ion.
 
-If you are a TJHSST student, you can join the `#ion` channel on the [TJ CSL Slack workspace](https://tjcsl.slack.com) to ask questions and interact with other Ion developers.  If you are not a TJHSST student, feel free to send an email to intranet [at] tjhsst [dot] edu and we will get to you as soon as we can.
-
+Feel free to send an email to intranet [at] tjhsst [dot] edu and we will get to you as soon as we can.
 
 ## Issues
-- Please use the templates. If none of them is a perfect match, choose the closest one.
+- Please use the templates. If none of them are a perfect match, choose the closest one.
 
 ## Security Vulnerabilities & Responsible Disclosure
 Please see [our security policy](#security-policy). Do not report security vulnerabilities in the public issue tracker.
