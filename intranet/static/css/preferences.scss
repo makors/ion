@@ -1,3 +1,5 @@
+@import 'theme-selector';
+
 .primary-content {
     max-width: 600px;
 }
@@ -69,4 +71,137 @@ tr:nth-last-child(2) a.delete-row {
     top: 10px;
     z-index: 1;
     margin-bottom: 15px;
+}
+
+// Theme selector styles for preferences page
+.theme-selector {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+}
+
+.theme-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.theme-option {
+    position: relative;
+    background-color: white;
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.theme-option:hover {
+    border-color: #007bff;
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.15);
+    transform: translateY(-2px);
+}
+
+.theme-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.theme-option input[type="radio"]:checked + .theme-label {
+    color: #007bff;
+}
+
+.theme-option:has(input[type="radio"]:checked) {
+    border-color: #007bff;
+    background-color: rgba(0, 123, 255, 0.05);
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
+}
+
+.theme-label {
+    cursor: pointer;
+    display: block;
+    width: 100%;
+}
+
+.theme-preview {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.color-swatch {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+    flex-shrink: 0;
+}
+
+.color-swatch.theme-light {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+}
+
+.color-swatch.theme-dark {
+    background: linear-gradient(135deg, #0d0d0b 0%, #1a1a1a 100%);
+}
+
+.color-swatch.theme-dark_improved {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+}
+
+.theme-info h5 {
+    margin: 0 0 4px 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #212529;
+}
+
+.theme-info p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+// Dark mode overrides for theme selector
+body.theme-dark .theme-selector,
+body.theme-dark_improved .theme-selector {
+    background-color: #2d2d2d;
+    border-color: #4a4a4a;
+}
+
+body.theme-dark .theme-option,
+body.theme-dark_improved .theme-option {
+    background-color: #3a3a3a;
+    border-color: #4a4a4a;
+}
+
+body.theme-dark .theme-option:hover,
+body.theme-dark_improved .theme-option:hover {
+    border-color: #4a9eff;
+    box-shadow: 0 4px 12px rgba(74, 158, 255, 0.2);
+}
+
+body.theme-dark .theme-option:has(input[type="radio"]:checked),
+body.theme-dark_improved .theme-option:has(input[type="radio"]:checked) {
+    border-color: #4a9eff;
+    background-color: rgba(74, 158, 255, 0.1);
+}
+
+body.theme-dark .theme-info h5,
+body.theme-dark_improved .theme-info h5 {
+    color: #e8e8e8;
+}
+
+body.theme-dark .theme-info p,
+body.theme-dark_improved .theme-info p {
+    color: #b8b8b8;
+}
+
+body.theme-dark .color-swatch,
+body.theme-dark_improved .color-swatch {
+    border-color: #4a4a4a;
 }

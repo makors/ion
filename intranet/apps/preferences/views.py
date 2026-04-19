@@ -290,6 +290,21 @@ def save_dark_mode_settings(request, user):
     return dark_mode_form
 
 
+def save_theme_settings(request, user):
+    theme_form = ThemeSelectorForm(user, data=request.POST, initial={"theme": getattr(user.dark_mode_properties, 'theme_preference', 'light')})
+    if theme_form.is_valid():
+        if theme_form.has_changed():
+            user.dark_mode_properties.theme_preference = theme_form.cleaned_data["theme"]
+            # Update dark_mode_enabled based on theme selection for backward compatibility
+            user.dark_mode_properties.dark_mode_enabled = theme_form.cleaned_data["theme"] in ['dark', 'dark_improved']
+            user.dark_mode_properties.save()
+            invalidate_obj(request.user.dark_mode_properties)
+            theme_name = dict(ThemeSelectorForm.THEME_CHOICES)[theme_form.cleaned_data["theme"]]
+            messages.success(request, f"Theme changed to {theme_name}")
+
+    return theme_form
+
+
 @login_required
 def preferences_view(request):
     """View and process updates to the preferences page."""
@@ -315,6 +330,7 @@ def preferences_view(request):
         notification_options_form = save_notification_options(request, user)
 
         dark_mode_form = save_dark_mode_settings(request, user)
+        theme_form = save_theme_settings(request, user)
 
         for error in errors:
             messages.error(request, error)
@@ -356,6 +372,7 @@ def preferences_view(request):
         notification_options_form = NotificationOptionsForm(user, initial=notification_options)
 
         dark_mode_form = DarkModeForm(user, initial={"dark_mode_enabled": user.dark_mode_properties.dark_mode_enabled})
+        theme_form = ThemeSelectorForm(user, initial={"theme": getattr(user.dark_mode_properties, 'theme_preference', 'light')})
 
     context = {
         # "phone_formset": phone_formset,
@@ -366,6 +383,7 @@ def preferences_view(request):
         "notification_options_form": notification_options_form,
         "bus_route_form": bus_route_form if settings.ENABLE_BUS_APP else None,
         "dark_mode_form": dark_mode_form,
+        "theme_form": theme_form,
     }
     return render(request, "preferences/preferences.html", context)
 

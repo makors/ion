@@ -102,6 +102,29 @@ class DarkModeForm(forms.Form):
         )
 
 
+class ThemeSelectorForm(forms.Form):
+    THEME_CHOICES = [
+        ('light', 'Light Theme'),
+        ('dark', 'Dark Theme'),
+        ('dark_improved', 'Improved Dark'),
+    ]
+    
+    def __init__(self, user, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Get current theme from user preferences or default to light
+        current_theme = getattr(user, 'theme_preference', 'light')
+        if user.dark_mode_properties.dark_mode_enabled:
+            current_theme = 'dark'  # Fallback for existing dark mode users
+        
+        self.fields["theme"] = forms.ChoiceField(
+            choices=self.THEME_CHOICES,
+            initial=current_theme,
+            label="Select Theme",
+            widget=forms.RadioSelect(attrs={'class': 'theme-radio'}),
+            required=True
+        )
+
+
 class PhoneForm(forms.ModelForm):
     """Represents a phone number (number + purpose)"""
 

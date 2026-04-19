@@ -453,6 +453,7 @@ TEMPLATES = [
                 "intranet.apps.context_processors.global_custom_theme",  # Sitewide custom themes (special events, etc)
                 "intranet.apps.context_processors.show_bus_button",
                 "intranet.apps.context_processors.enable_dark_mode",
+                "intranet.apps.context_processors.theme_info",
                 "intranet.apps.context_processors.oauth_toolkit",  # Django OAuth Toolkit-related middleware
                 "intranet.apps.context_processors.settings_export",  # "Exports" django.conf.settings as DJANGO_SETTINGS
                 "intranet.apps.features.context_processors.feature_announcements",  # Feature announcements that need to be shown on the current page

@@ -1,0 +1,285 @@
+// Theme Selector Component Styles
+$bg-primary: #1a1a1a;
+$bg-secondary: #2d2d2d;
+$bg-tertiary: #3a3a3a;
+$bg-quaternary: #404040;
+$text-primary: #e8e8e8;
+$text-secondary: #b8b8b8;
+$text-muted: #888888;
+$interactive-primary: #4a9eff;
+$interactive-hover: #5ba8ff;
+$interactive-active: #3a8eef;
+$border-primary: #4a4a4a;
+$border-secondary: #5a5a5a;
+
+.theme-selector-dropdown {
+    position: relative;
+    display: inline-block;
+    margin-left: 16px;
+}
+
+.theme-selector-trigger {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background-color: $bg-secondary;
+    border: 1px solid $border-primary;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: $text-primary;
+    font-weight: 500;
+    min-width: 160px;
+    justify-content: space-between;
+}
+
+.theme-selector-trigger:hover {
+    background-color: $bg-tertiary;
+    border-color: $interactive-primary;
+    box-shadow: 0 2px 8px rgba(74, 158, 255, 0.2);
+}
+
+.theme-selector-trigger.open {
+    border-color: $interactive-primary;
+    box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.2);
+}
+
+.theme-selector-trigger i {
+    font-size: 0.9em;
+    transition: transform 0.2s ease;
+}
+
+.theme-selector-trigger.open i.fa-chevron-down {
+    transform: rotate(180deg);
+}
+
+.theme-name {
+    flex: 1;
+    text-align: left;
+}
+
+.theme-selector-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: $bg-secondary;
+    border: 1px solid $border-primary;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.2s ease;
+    margin-top: 4px;
+    overflow: hidden;
+}
+
+.theme-selector-menu.open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.theme-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-bottom: 1px solid $border-primary;
+    position: relative;
+}
+
+.theme-option:last-child {
+    border-bottom: none;
+}
+
+.theme-option:hover {
+    background-color: $bg-tertiary;
+}
+
+.theme-option.selected {
+    background-color: rgba(74, 158, 255, 0.1);
+    border-left: 3px solid $interactive-primary;
+}
+
+.theme-preview {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+}
+
+.color-swatch {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    border: 1px solid $border-primary;
+    flex-shrink: 0;
+}
+
+.theme-info h5 {
+    margin: 0 0 2px 0;
+    color: $text-primary;
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.theme-info p {
+    margin: 0;
+    color: $text-secondary;
+    font-size: 0.8rem;
+}
+
+.theme-check {
+    color: $interactive-primary;
+    font-size: 0.9rem;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.theme-option.selected .theme-check {
+    opacity: 1;
+}
+
+// Light theme overrides
+body:not(.theme-dark):not(.theme-dark_improved) .theme-selector-dropdown {
+    .theme-selector-trigger {
+        background-color: #ffffff;
+        border-color: #d1d5db;
+        color: #374151;
+    }
+    
+    .theme-selector-trigger:hover {
+        background-color: #f9fafb;
+        border-color: #3b82f6;
+    }
+    
+    .theme-selector-menu {
+        background-color: #ffffff;
+        border-color: #d1d5db;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    }
+    
+    .theme-option {
+        border-bottom-color: #e5e7eb;
+    }
+    
+    .theme-option:hover {
+        background-color: #f9fafb;
+    }
+    
+    .theme-option.selected {
+        background-color: rgba(59, 130, 246, 0.1);
+    }
+    
+    .theme-info h5 {
+        color: #374151;
+    }
+    
+    .theme-info p {
+        color: #6b7280;
+    }
+    
+    .color-swatch {
+        border-color: #d1d5db;
+    }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+    .theme-selector-dropdown {
+        margin-left: 8px;
+    }
+    
+    .theme-selector-trigger {
+        padding: 6px 12px;
+        min-width: 140px;
+        font-size: 0.9rem;
+    }
+    
+    .theme-selector-menu {
+        left: -20px;
+        right: -20px;
+        width: calc(100vw - 40px);
+        max-width: 300px;
+    }
+    
+    .theme-option {
+        padding: 10px 12px;
+    }
+    
+    .theme-preview {
+        gap: 8px;
+    }
+    
+    .color-swatch {
+        width: 20px;
+        height: 20px;
+    }
+    
+    .theme-info h5 {
+        font-size: 0.9rem;
+    }
+    
+    .theme-info p {
+        font-size: 0.75rem;
+    }
+}
+
+// Animation for theme switching
+@keyframes themeSwitch {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.theme-switching {
+    animation: themeSwitch 0.3s ease-in-out;
+}
+
+// Focus styles for accessibility
+.theme-selector-trigger:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.3);
+}
+
+.theme-option:focus {
+    outline: none;
+    background-color: $bg-tertiary;
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+    .theme-selector-trigger {
+        border-width: 2px;
+    }
+    
+    .theme-option.selected {
+        border-left-width: 4px;
+    }
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+    .theme-selector-trigger,
+    .theme-selector-menu,
+    .theme-option,
+    .theme-check {
+        transition: none;
+    }
+    
+    .theme-selector-menu {
+        transform: none;
+    }
+}
